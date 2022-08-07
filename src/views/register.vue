@@ -2,20 +2,17 @@
   <div id="login" class="login">
     <div class="wrap">
       <h1>注 册</h1>
-      <el-form :model="form" ref="form" class="form">
-        <el-form-item prop="username">
-          <el-input placeholder="学号" v-model="form.id" autocomplete="off"></el-input>
-        </el-form-item>
+      <el-form :model="form" ref="form" :rules="rules" class="form">
         <el-form-item prop="name">
           <el-input placeholder="姓名" v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
          <el-form-item prop="username">
           <el-input placeholder="昵称" v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-input placeholder="邮箱" v-model="form.mailbox" autocomplete="off"></el-input>       
-          <el-button type="primary" plain float="right" @click="send">发送验证码</el-button>
+        <el-form-item prop="mailbox">
+        <el-input placeholder="邮箱" v-model="form.mailbox"></el-input>   
         </el-form-item>
+                  <el-button type="primary" plain float="right" @click="send">发送验证码</el-button>
         <el-form-item >
           <el-input placeholder="验证码" v-model="form.code" autocomplete="off"></el-input>
         </el-form-item>
@@ -50,22 +47,39 @@ import qs from "qs";
 export default {
   name: "NewRegister",
   data() {
+     var checkEmail = (rule, value, callback) => {
+    const mailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+    if (!value) {
+      return callback(new Error('邮箱不能为空'))
+    }
+    setTimeout(() => {
+      if (mailReg.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的邮箱格式'))
+      }
+    }, 100)
+  }
     return {
       form: {
-        id: '',
         name: '',
         username: '',
         password1: '',
         password2: '',
         mailbox:'',
         code:'',
-      }
+      },
+      rules: {
+      mailbox: [
+      { validator: checkEmail, trigger: 'change' }
+    ]
+  }
     }
   },
   methods: {
     register: function () {
       // 检查表单是否有填写内容
-      if (this.form.id === '' || this.form.password1 === ''|| this.form.password2 === '' || this.form.username === '' || this.form.name === '' || this.form.mailbox === '' || this.form.code === '') {
+      if (this.form.password1 === ''|| this.form.password2 === '' || this.form.username === '' || this.form.name === '' || this.form.mailbox === '' || this.form.code === '') {
         this.$message.warning("请填写完整信息!");
         return;
       }
@@ -73,7 +87,6 @@ export default {
         method: 'post',           
         url: '/api/user/register/',       
         data: qs.stringify({      
-          id: this.form.id,
           name: this.form.name,
           username: this.form.username,
           mailbox: this.form.mailbox,
@@ -92,7 +105,7 @@ export default {
             }, 1000);
             break;
           case 1002:
-            this.$message.error("该学号已被注册!");
+            this.$message.error("该邮箱已被注册!");
             break;
           case 1003:
             this.$message.error("两次输入的密码不一致!");
@@ -115,7 +128,6 @@ export default {
         method: 'get',           
         url: '/api/user/register/',       
         params:{
-          id:this.form.id,
           mailbox:this.form.mailbox
         }
       })

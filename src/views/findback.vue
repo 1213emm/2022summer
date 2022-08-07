@@ -2,10 +2,10 @@
   <div id="login" class="login">
     <div class="wrap">
       <h1>找回密码</h1>
-      <el-form :model="form" ref="form" class="form">
-        <el-form-item prop="id">
-          <el-input placeholder="学号" type="id"  v-model="form.id" autocomplete="off"></el-input>
-        </el-form-item>
+      <el-form :model="form" ref="form" :rules="rules" class="form">
+      <el-form-item  prop="mailbox">
+        <el-input placeholder="邮箱" v-model="form.mailbox"></el-input>
+      </el-form-item>
         <el-form-item>
           <el-button type="primary" plain float="right" @click="send">发送验证码</el-button>
         </el-form-item>
@@ -25,21 +25,38 @@ import qs from "qs";
 export default {
   name: "NewRegister",
   data() {
+    var checkEmail = (rule, value, callback) => {
+    const mailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+    if (!value) {
+      return callback(new Error('邮箱不能为空'))
+    }
+    setTimeout(() => {
+      if (mailReg.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的邮箱格式'))
+      }
+    }, 100)
+  }    
     return {
       form: {
-        id: '',
-        security_issue:'密保问题',
-        security_answer:'',
-      }
+        mailbox: '',
+        code:'',
+      },
+      rules: {
+      mailbox: [
+      { validator: checkEmail, trigger: 'change' }
+    ]
+  }
     }
   },
   methods: {
       send: function () {
       this.$axios({
         method: 'get',           
-        url: '/api/user/register/',       
+        url: '/api/user/password/',       
         params:{
-          id:this.form.id
+          mailbox:this.form.mailbox
         }
       })
       .then(res => {              /* res 是 response 的缩写 */
@@ -60,14 +77,14 @@ export default {
       })
     },
     get: function(){
-      if(this.form.id === '' || this.form.code === ''){
+      if(this.form.mailbox === '' || this.form.code === ''){
         this.$message.warning("请填写完整信息");
       }
       this.$axios({
         method: 'post',           
         url: '/api/user/password/',       
         data: qs.stringify({      
-          id: this.form.id,
+          mailbox: this.form.mailbox,
           code: this.form.code
         })
       })

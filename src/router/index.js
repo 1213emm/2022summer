@@ -23,6 +23,36 @@ const routes = [
     path: '/findback',
     name: 'findback',
     component: () => import( '../views/findback.vue')
+  },{
+    path: '/project',
+    name: 'project',
+    component: () => import( '../views/project.vue')
+  },{
+    path: '/word',
+    name: 'word',
+    component: () => import( '../views/word.vue')
+  },{
+    path: '/team',
+    name: 'team',
+    component: () => import( '../views/Team.vue')
+  },{
+    path: '/buildTeam',
+    name: 'buildTeam',
+    component: () => import( '../views/BuildTeam.vue')
+  },{
+    path: '/buildproject',
+    name: 'BuildProject',
+    component: () => import( '../views/BuildProject.vue')
+  },
+  {
+    path: '/chart',
+    name: 'chart',
+    component: () => import( '../views/chart.vue')
+  },
+  {
+    path: '/prototype',
+    name: 'prototype',
+    component: () => import( '../views/prototype.vue')
   },
 ]
 

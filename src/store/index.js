@@ -7,8 +7,14 @@ export default new Vuex.Store({
   state: {
     islogin:false,
     username:'xxx',
-    id:'',
+    mailbox:'',//邮箱
     name:'xx',//真实姓名
+    projectid:0,
+    wordid:0,
+    prototypeid:0,
+    chartid:0,
+    teamid:'',
+    type:0
   },
   getters: {
   },
